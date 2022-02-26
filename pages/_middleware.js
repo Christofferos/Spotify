@@ -8,6 +8,8 @@ export const middleware = async (req) => {
   if (pathname.includes('/api/auth') || token) {
     return NextResponse.next()
   } else if (!token && pathname !== '/login') {
-    return NextResponse.redirect('http://localhost:3000/login')
+    if (process.env.NEXTAUTH_URL === 'http://localhost:3000')
+      return NextResponse.redirect('http://localhost:3000/login')
+    else return NextResponse.redirect('https://spotify-boost.vercel.app/login')
   }
 }
