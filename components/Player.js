@@ -16,8 +16,10 @@ import {
   PauseIcon,
   FastForwardIcon,
   VolumeUpIcon,
+  CalanderIcon,
 } from '@heroicons/react/solid'
 import { debounce } from 'lodash'
+import { playlistState } from '../atoms/playlistAtom'
 
 export const Player = () => {
   const spotifyApi = useSpotify()
@@ -26,6 +28,8 @@ export const Player = () => {
     useRecoilState(currentTrackIdState)
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState)
   const [volume, setVolume] = useState(50)
+  const [isShuffle, setIsShuffle] = useState(false)
+  const [isRepeat, setIsRepeat] = useState(false)
   const songInfo = useSongInfo()
 
   const handlePlayPause = () => {
@@ -34,26 +38,29 @@ export const Player = () => {
         spotifyApi.pause()
         setIsPlaying(false)
       } else {
-        spotifyApi.play()
+        spotifyApi.play().catch((err) => console.log(err))
         setIsPlaying(true)
       }
     })
   }
 
   const fetchCurrentSong = () => {
-    if (!songInfo) {
-      spotifyApi.getMyCurrentPlayingTrack().then((data) => {
-        console.log('Now playing: ', data.body?.item)
+    spotifyApi
+      .getMyCurrentPlayingTrack()
+      .then((data) => {
         setCurrentIdTrack(data.body?.item?.id)
         spotifyApi.getMyCurrentPlaybackState().then((data) => {
+          const isRepeatOn = data.body?.repeat_state !== 'off'
+          setIsRepeat(isRepeatOn)
+          setIsShuffle(data.body?.shuffle_state)
           setIsPlaying(data.body?.is_playing)
         })
       })
-    }
+      .catch((err) => console.log(err))
   }
   useEffect(() => {
     if (spotifyApi.getAccessToken() && !currentTrackId) {
-      fetchCurrentSong()
+      if (!songInfo) fetchCurrentSong()
       setVolume(50)
     }
   }, [currentTrackId, spotifyApi, session])
@@ -77,7 +84,7 @@ export const Player = () => {
       <div className="flex items-center space-x-4">
         <img
           className="hidden h-10 w-10 md:inline"
-          src={songInfo?.album.images?.[0]?.url}
+          src={songInfo?.album?.images?.[0]?.url}
           alt=""
         />
         <div>
@@ -86,25 +93,53 @@ export const Player = () => {
         </div>
       </div>
       {/* Center section */}
-      <div className="flex items-center justify-evenly">
-        <SwitchHorizontalIcon className="button" />
-        <RewindIcon
-          className="button"
-          onClick={() => spotifyApi.skipToPrevious()}
-        />
-        {isPlaying ? (
-          <PauseIcon onClick={handlePlayPause} className="button h-10 w-10" />
-        ) : (
-          <PlayIcon onClick={handlePlayPause} className="button h-10 w-10" />
-        )}
-        <FastForwardIcon
-          className="button"
-          onClick={() => spotifyApi.skipToNext()}
-        />
-        <ReplyIcon className="button" />
+      <div className="flex flex-col justify-center">
+        <div className="flex flex-row items-center justify-evenly">
+          <SwitchHorizontalIcon
+            className={`button ${isShuffle ? 'fill-green-500' : null} h-8 w-8`}
+            onClick={() => {
+              spotifyApi.setShuffle(!isShuffle).catch((err) => console.log(err))
+              setIsShuffle(!isShuffle)
+            }}
+          />
+          <RewindIcon
+            className="button h-10 w-10"
+            onClick={() => {
+              spotifyApi.skipToPrevious().then(() => fetchCurrentSong())
+            }}
+          />
+          {isPlaying ? (
+            <PauseIcon onClick={handlePlayPause} className="button h-12 w-12" />
+          ) : (
+            <PlayIcon onClick={handlePlayPause} className="button h-12 w-12" />
+          )}
+          <FastForwardIcon
+            className="button h-10 w-10"
+            onClick={() => {
+              spotifyApi.skipToNext().then(() => fetchCurrentSong())
+            }}
+          />
+          <ReplyIcon
+            className={`button ${isRepeat ? 'fill-green-500' : null} h-8 w-8`}
+            onClick={() => {
+              const newIsRepeatState = !isRepeat
+              setIsRepeat(newIsRepeatState)
+              const repeatType = newIsRepeatState ? 'track' : 'off'
+              spotifyApi.setRepeat(repeatType)
+            }}
+          />
+        </div>
+        {/* <input
+          className="w-45"
+          type="range"
+          value={volume}
+          min={0}
+          max={100}
+          onChange={() => console.log('H')}
+        /> */}
       </div>
       {/* Right */}
-      <div className="flex items-center justify-end space-x-3 pr-5 md:space-x-4">
+      <div className="flex hidden items-center justify-end space-x-3 pr-5 md:flex md:space-x-4">
         <VolumeDownIcon
           onClick={() => volume > 0 && setVolume(volume - 10)}
           className="button"

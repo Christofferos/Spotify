@@ -10,15 +10,19 @@ import { signOut, useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { useSpotify } from '../hooks/useSpotify'
-import { playlistIdState } from '../atoms/playlistAtom'
+import {
+  centerDisplayState,
+  DISPLAY_TYPE,
+  playlistIdState,
+} from '../atoms/playlistAtom'
 
 export const Sidebar = () => {
   const spotifyApi = useSpotify()
   const [playlists, setPlaylists] = useState([])
   const [playlistId, setPlaylistId] = useRecoilState(playlistIdState)
   const { data: session, status } = useSession()
+  const [, setCenterDisplay] = useRecoilState(centerDisplayState)
 
-  console.log('HERE ', playlistId)
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
       spotifyApi.getUserPlaylists().then((data) => {
@@ -47,13 +51,23 @@ export const Sidebar = () => {
           <PlusCircleIcon className="h-5 w-5" />
           <p>Create Playlist</p>
         </button>
-        <button className="flex items-center space-x-2 hover:text-white">
+        <button
+          className="flex items-center space-x-2 hover:text-white"
+          onClick={() => {
+            setCenterDisplay(DISPLAY_TYPE.SAVED_TRACKS)
+          }}
+        >
           <HeartIcon className="h-5 w-5" />
           <p>Liked Songs</p>
         </button>
-        <button className="flex items-center space-x-2 hover:text-white">
+        <button
+          className="flex items-center space-x-2 hover:text-white"
+          onClick={() => {
+            setCenterDisplay(DISPLAY_TYPE.SAVED_SHOWS)
+          }}
+        >
           <RssIcon className="h-5 w-5" />
-          <p>Your Episodes</p>
+          <p>Your Podcasts</p>
         </button>
         <hr className="border-t-[0.1px] border-gray-900" />
 
@@ -63,7 +77,10 @@ export const Sidebar = () => {
             <p
               key={playlist.id}
               className="cursor-pointer hover:text-white"
-              onClick={() => setPlaylistId(playlist.id)}
+              onClick={() => {
+                setPlaylistId(playlist.id)
+                setCenterDisplay(DISPLAY_TYPE.PLAYLIST)
+              }}
             >
               {playlist.name}
             </p>

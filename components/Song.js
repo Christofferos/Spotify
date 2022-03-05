@@ -1,21 +1,29 @@
 import { useState } from 'react'
+import { CalendarIcon, ChartBarIcon } from '@heroicons/react/outline'
 import { useSpotify } from '../hooks/useSpotify'
 import { millisToMinutesAndSeconds } from '../lib/time'
 import { currentTrackIdState, isPlayingState } from '../atoms/songAtom'
 import { useRecoilState } from 'recoil'
+import { playlistState, songAnalyticsState } from '../atoms/playlistAtom'
 
-export const Song = ({ order, track }) => {
+const Song = ({ order, track }) => {
   const spotifyApi = useSpotify()
   const [currentTrackId, setCurrentTrackId] =
     useRecoilState(currentTrackIdState)
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState)
+  const [playlist, setPlaylist] = useRecoilState(playlistState)
+  const [songAnalytics, setSongAnalytics] = useRecoilState(songAnalyticsState)
 
   const playSong = () => {
     setCurrentTrackId(track.track.id)
     setIsPlaying(true)
-    spotifyApi.play({
-      uris: [track.track.uri],
-    })
+    spotifyApi
+      .play({
+        uris: playlist?.tracks?.items.map((item) => item.track.uri),
+        offset: { position: order },
+        // contextUri: playlist.uri,
+      })
+      .catch((err) => console.log(err))
   }
 
   return (
@@ -39,7 +47,37 @@ export const Song = ({ order, track }) => {
       <div className="ml-auto flex items-center justify-between md:ml-0">
         <p className="hidden w-40 md:inline">{track.track.album.name}</p>
         <p>{millisToMinutesAndSeconds(track.track.duration_ms)}</p>
+        {/* 📅 */}
+        <div className="flex flex-row">
+          <p className="mx-2 flex h-6 w-6 items-center justify-center rounded-3xl bg-white">
+            <CalendarIcon
+              className="button h-4 w-4 stroke-black"
+              onClick={(e) => {
+                spotifyApi
+                  .addToQueue(track.track.uri)
+                  .catch((err) => console.log(err))
+                e.stopPropagation()
+              }}
+            />
+          </p>
+          <p className="mx-2 flex h-6 w-6 items-center justify-center rounded-3xl bg-white">
+            <ChartBarIcon
+              className="button h-4 w-4 stroke-black"
+              onClick={(e) => {
+                spotifyApi
+                  .getAudioFeaturesForTrack(track.track.id)
+                  .then((data) => {
+                    setSongAnalytics(data.body)
+                  })
+                  .catch((err) => console.log(err))
+                e.stopPropagation()
+              }}
+            />
+          </p>
+        </div>
       </div>
     </div>
   )
 }
+
+export default Song
