@@ -48,6 +48,7 @@ export const Player = () => {
     spotifyApi
       .getMyCurrentPlayingTrack()
       .then((data) => {
+        console.log('CHECK: ', data.body?.item)
         setCurrentIdTrack(data.body?.item?.id)
         spotifyApi.getMyCurrentPlaybackState().then((data) => {
           const isRepeatOn = data.body?.repeat_state !== 'off'
@@ -105,7 +106,9 @@ export const Player = () => {
           <RewindIcon
             className="button h-10 w-10"
             onClick={() => {
-              spotifyApi.skipToPrevious().then(() => fetchCurrentSong())
+              spotifyApi
+                .skipToPrevious()
+                .then(() => setTimeout(() => fetchCurrentSong(), 250))
             }}
           />
           {isPlaying ? (
@@ -116,7 +119,9 @@ export const Player = () => {
           <FastForwardIcon
             className="button h-10 w-10"
             onClick={() => {
-              spotifyApi.skipToNext().then(() => fetchCurrentSong())
+              spotifyApi
+                .skipToNext()
+                .then(() => setTimeout(() => fetchCurrentSong(), 250))
             }}
           />
           <ReplyIcon

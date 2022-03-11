@@ -3,23 +3,37 @@ import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { shuffle } from 'lodash'
 import { useRecoilState } from 'recoil'
+
 import {
   playlistIdState,
   playlistState,
   centerDisplayState,
-  DISPLAY_TYPE,
   showsState,
   showIdState,
   episodesState,
   songAnalyticsState,
 } from '../atoms/playlistAtom'
 import { useSpotify } from '../hooks/useSpotify'
+import { signOut } from 'next-auth/react'
 import { Shows } from './Shows'
 import { Episodes } from './Episodes'
 import { Songs } from './Songs'
-import { signOut } from 'next-auth/react'
+import { SongAnalytics } from './SongAnalytics'
+import { Home } from './Home'
+import { Search } from './Search'
+import { Library } from './Library'
 
-const colors = [
+export const DISPLAY_TYPE = {
+  HOME: 'HOME',
+  SEARCH: 'SEARCH',
+  LIBRARY: 'LIBRARY',
+  SAVED_TRACKS: 'SAVED_TRACKS',
+  SAVED_EPISODES: 'SAVED_EPISODES',
+  SAVED_SHOWS: 'SAVED_SHOWS',
+  PLAYLIST: 'PLAYLIST',
+}
+
+export const colors = [
   'from-indigo-500',
   'from-blue-500',
   'from-green-500',
@@ -41,6 +55,11 @@ export const Center = () => {
   const [showId] = useRecoilState(showIdState)
   const [songAnalytics, setSongAnalytics] = useRecoilState(songAnalyticsState)
   const [metaData, setMetaData] = useState({ name: '', imgUrl: '' })
+
+  const isHomeView = centerDisplay === DISPLAY_TYPE.HOME
+  const isSearchView = centerDisplay === DISPLAY_TYPE.SEARCH
+  const isLibraryView = centerDisplay === DISPLAY_TYPE.LIBRARY
+  const isHiddenHeadingSection = isHomeView || isSearchView || isLibraryView
 
   const isSavedSongsView = centerDisplay === DISPLAY_TYPE.SAVED_TRACKS
   const isShowView = centerDisplay === DISPLAY_TYPE.SAVED_SHOWS
@@ -101,7 +120,7 @@ export const Center = () => {
     centerDisplay === DISPLAY_TYPE.SAVED_TRACKS
 
   return (
-    <div className="h-screen flex-grow overflow-y-scroll scrollbar-hide">
+    <div className="h-screen min-w-0 flex-grow overflow-y-scroll scrollbar-hide">
       <header className="absolute top-5 right-8">
         <div
           className="flex cursor-pointer items-center space-x-3 rounded-full bg-black p-1 pr-2 text-white opacity-90 hover:opacity-80"
@@ -116,39 +135,28 @@ export const Center = () => {
           <ChevronDownIcon className="h-5 w-5" />
         </div>
       </header>
-      <section
-        className={`flex h-80 items-end space-x-7 bg-gradient-to-b p-8 ${color} to-black text-white`}
-      >
-        <img className="h-44 w-44 shadow-2xl" src={metaData?.imgUrl} alt="" />
-        <div>
-          <p>PLAYLIST</p>
-          <h4 className="text-2xl font-bold md:text-2xl xl:text-5xl">
-            {metaData?.name}
-          </h4>
-        </div>
-      </section>
+      {!isHiddenHeadingSection && (
+        <section
+          className={`flex h-80 items-end space-x-7 bg-gradient-to-b p-8 ${color} to-black text-white`}
+        >
+          <img className="h-44 w-44 shadow-2xl" src={metaData?.imgUrl} alt="" />
+          <div>
+            <p>PLAYLIST</p>
+            <h4 className="text-2xl font-bold md:text-2xl xl:text-5xl">
+              {metaData?.name}
+            </h4>
+          </div>
+        </section>
+      )}
       <div>
+        {isHomeView && <Home color={color} />}
+        {isSearchView && <Search />}
+        {isLibraryView && <Library />}
         {isSongPlaylistView && <Songs />}
         {isShowView && <Shows />}
         {isEpisodesView && <Episodes />}
       </div>
-      {songAnalytics && (
-        <header className="absolute left-1/2 top-5">
-          <div
-            className="flex cursor-pointer flex-col items-center space-x-3 rounded-lg bg-black p-1 pr-2 text-white opacity-90 hover:opacity-80"
-            onClick={() => setSongAnalytics(null)}
-          >
-            <ChartBarIcon className="h-5 w-5" />
-            <h2>Energy: {songAnalytics?.energy}</h2>
-            <h2>Valence: {songAnalytics?.valence}</h2>
-            <h2>Tempo: {songAnalytics?.tempo}</h2>
-            <h2>Dancability: {songAnalytics?.danceability}</h2>
-            <h2>Speachiness: {songAnalytics?.speechiness}</h2>
-            <h2>Acousticness: {songAnalytics?.acousticness}</h2>
-            <XIcon className="h-5 w-5" />
-          </div>
-        </header>
-      )}
+      {songAnalytics && <SongAnalytics />}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useToasts } from 'react-toast-notifications'
 import { CalendarIcon, ChartBarIcon } from '@heroicons/react/outline'
 import { useSpotify } from '../hooks/useSpotify'
 import { millisToMinutesAndSeconds } from '../lib/time'
@@ -8,6 +9,7 @@ import { playlistState, songAnalyticsState } from '../atoms/playlistAtom'
 
 const Song = ({ order, track }) => {
   const spotifyApi = useSpotify()
+  const { addToast } = useToasts()
   const [currentTrackId, setCurrentTrackId] =
     useRecoilState(currentTrackIdState)
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState)
@@ -55,7 +57,20 @@ const Song = ({ order, track }) => {
               onClick={(e) => {
                 spotifyApi
                   .addToQueue(track.track.uri)
-                  .catch((err) => console.log(err))
+                  .then(() => {
+                    addToast('Song Queued', {
+                      appearance: 'success',
+                      autoDismiss: true,
+                      autoDismissTimeout: 500,
+                    })
+                  })
+                  .catch((err) => {
+                    console.log(err)
+                    addToast('Queue Error', {
+                      appearance: 'error',
+                      autoDismiss: true,
+                    })
+                  })
                 e.stopPropagation()
               }}
             />
@@ -67,7 +82,7 @@ const Song = ({ order, track }) => {
                 spotifyApi
                   .getAudioFeaturesForTrack(track.track.id)
                   .then((data) => {
-                    setSongAnalytics(data.body)
+                    setSongAnalytics(data?.body)
                   })
                   .catch((err) => console.log(err))
                 e.stopPropagation()

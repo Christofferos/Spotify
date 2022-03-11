@@ -1,9 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil'
-import {
-  centerDisplayState,
-  DISPLAY_TYPE,
-  showIdState,
-} from '../atoms/playlistAtom'
+import { centerDisplayState, showIdState } from '../atoms/playlistAtom'
+import { DISPLAY_TYPE } from './Center'
 
 const Show = ({ order, show }) => {
   const [, setCenterDisplay] = useRecoilState(centerDisplayState)

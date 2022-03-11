@@ -1,4 +1,5 @@
 import { atom } from 'recoil'
+import { DISPLAY_TYPE } from '../components/Center'
 
 export const playlistState = atom({
   key: 'playlistState',
@@ -29,15 +30,6 @@ export const songAnalyticsState = atom({
   key: 'songAnalyticsState',
   default: null,
 })
-
-export const DISPLAY_TYPE = {
-  PLAYLIST: 'PLAYLIST',
-  SAVED_TRACKS: 'SAVED_TRACKS',
-  SAVED_EPISODES: 'SAVED_EPISODES',
-  SAVED_SHOWS: 'SAVED_SHOWS',
-  HOME: 'HOME',
-  SEARCH: 'SEARCH',
-}
 
 export const centerDisplayState = atom({
   key: 'centerDisplayState',

@@ -6,15 +6,13 @@ import {
   RssIcon,
   HeartIcon,
 } from '@heroicons/react/outline'
+import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { useSpotify } from '../hooks/useSpotify'
-import {
-  centerDisplayState,
-  DISPLAY_TYPE,
-  playlistIdState,
-} from '../atoms/playlistAtom'
+import { centerDisplayState, playlistIdState } from '../atoms/playlistAtom'
+import { DISPLAY_TYPE } from './Center'
 
 export const Sidebar = () => {
   const spotifyApi = useSpotify()
@@ -32,17 +30,32 @@ export const Sidebar = () => {
   }, [session, spotifyApi])
 
   return (
-    <div className="hidden h-screen overflow-y-scroll border-r border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex lg:max-w-[15rem] lg:text-sm">
+    <div className="hidden h-screen shrink-0 overflow-y-scroll border-r border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex lg:max-w-[15rem] lg:text-sm">
       <div className="space-y-4">
-        <button className="flex items-center space-x-2 hover:text-white">
+        <button
+          className="flex items-center space-x-2 hover:text-white"
+          onClick={() => {
+            setCenterDisplay(DISPLAY_TYPE.HOME)
+          }}
+        >
           <HomeIcon className="h-5 w-5" />
           <p>Home</p>
         </button>
-        <button className="flex items-center space-x-2 hover:text-white">
+        <button
+          className="flex items-center space-x-2 hover:text-white"
+          onClick={() => {
+            setCenterDisplay(DISPLAY_TYPE.SEARCH)
+          }}
+        >
           <SearchIcon className="h-5 w-5" />
           <p>Search</p>
         </button>
-        <button className="flex items-center space-x-2 hover:text-white">
+        <button
+          className="flex items-center space-x-2 hover:text-white"
+          onClick={() => {
+            setCenterDisplay(DISPLAY_TYPE.LI)
+          }}
+        >
           <LibraryIcon className="h-5 w-5" />
           <p>Library</p>
         </button>

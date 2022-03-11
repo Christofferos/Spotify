@@ -1,5 +1,5 @@
 import { useRecoilState, useRecoilValue } from 'recoil'
-import { DISPLAY_TYPE, episodesState, showsState } from '../atoms/playlistAtom'
+import { episodesState, showsState } from '../atoms/playlistAtom'
 import Episode from './Episode'
 
 export const Episodes = () => {
