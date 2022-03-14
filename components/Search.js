@@ -15,7 +15,6 @@ export const Search = () => {
       spotifyApi
         ?.search(query, types, { limit: 3 })
         .then((data) => {
-          console.log('HERE ', data.body?.tracks?.items)
           setFoundSongs(data.body?.tracks?.items)
         })
         .catch((err) => console.error(err))
@@ -32,19 +31,23 @@ export const Search = () => {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center space-y-5">
-      <div className="flex w-60 flex-row rounded-full bg-white hover:opacity-80">
+      <h4 className="md:text-2l xl:text-5l p-5 text-4xl font-bold text-white">
+        SEARCH
+      </h4>
+      <div className="flex w-64 flex-row rounded-full bg-white hover:opacity-80">
         <SearchIcon className="h-7 w-7 pl-1" />
         <input
-          className="pl-3 text-black outline-none"
+          className="w-48 pl-3 text-black outline-none"
           placeholder="Artists, songs or podcasts"
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      {foundSongs?.map((song) => {
+      {foundSongs?.map((song, key) => {
         return (
           <img
             className="h-44 w-44 shadow-2xl"
             src={song?.album?.images?.[0]?.url}
+            key={key}
             alt=""
           />
         )

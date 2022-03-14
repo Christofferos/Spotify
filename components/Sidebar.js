@@ -53,7 +53,7 @@ export const Sidebar = () => {
         <button
           className="flex items-center space-x-2 hover:text-white"
           onClick={() => {
-            setCenterDisplay(DISPLAY_TYPE.LI)
+            setCenterDisplay(DISPLAY_TYPE.LIBRARY)
           }}
         >
           <LibraryIcon className="h-5 w-5" />

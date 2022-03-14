@@ -48,7 +48,6 @@ export const Player = () => {
     spotifyApi
       .getMyCurrentPlayingTrack()
       .then((data) => {
-        console.log('CHECK: ', data.body?.item)
         setCurrentIdTrack(data.body?.item?.id)
         spotifyApi.getMyCurrentPlaybackState().then((data) => {
           const isRepeatOn = data.body?.repeat_state !== 'off'

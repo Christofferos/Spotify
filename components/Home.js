@@ -59,27 +59,27 @@ export const Home = ({ color }) => {
       .catch((err) => console.error(err))
   }, [])
 
+  const recommendReqConfig = {
+    seed_artists: '',
+    seed_tracks: '',
+    seed_genres: selectedGenres.length > 0 ? selectedGenres.join() : 'electro',
+    min_danceability: songAttributes.danceability[0],
+    max_danceability: songAttributes.danceability[1],
+    min_energy: songAttributes.energy[0],
+    max_energy: songAttributes.energy[1],
+    min_speechiness: songAttributes.speachiness[0],
+    max_speechiness: songAttributes.speachiness[1],
+    min_popularity: songAttributes.popularity[0] * 100,
+    max_popularity: songAttributes.popularity[1] * 100,
+    min_tempo: songAttributes.tempo[0] * 200,
+    max_tempo: songAttributes.tempo[1] * 200,
+    limit: 5,
+  }
+
   const getRecommendedSongs = () => {
     spotifyApi
-      .getRecommendations({
-        seed_artists: '',
-        seed_tracks: '',
-        seed_genres:
-          selectedGenres.length > 0 ? selectedGenres.join() : 'electro',
-        min_danceability: songAttributes.danceability[0],
-        max_danceability: songAttributes.danceability[1],
-        min_energy: songAttributes.energy[0],
-        max_energy: songAttributes.energy[1],
-        min_speechiness: songAttributes.speachiness[0],
-        max_speechiness: songAttributes.speachiness[1],
-        min_popularity: songAttributes.popularity[0] * 100,
-        max_popularity: songAttributes.popularity[1] * 100,
-        min_tempo: songAttributes.tempo[0] * 200,
-        max_tempo: songAttributes.tempo[1] * 200,
-        limit: 5,
-      })
+      .getRecommendations(recommendReqConfig)
       .then((data) => {
-        console.log(data)
         setRecommendedSongs(data.body?.tracks)
       })
       .catch((err) => console.error(err))
@@ -117,8 +117,8 @@ export const Home = ({ color }) => {
       <div className="flex flex-row flex-wrap justify-center space-x-1 px-8 pb-4 text-white">
         {recommendedSongs?.map((recommendedSong, id) => (
           <div
-            className="flex flex-col"
-            key={id}
+            className="flex cursor-pointer flex-col hover:opacity-50"
+            key={recommendedSong?.id}
             onClick={() => playSong(recommendedSong)}
           >
             <img
@@ -169,7 +169,7 @@ export const Home = ({ color }) => {
             <div
               key={key}
               id={genre}
-              className={`mr-3 flex cursor-pointer items-center rounded-full bg-gradient-to-b ${color} to-black p-1 pr-2 text-white ${
+              className={`mr-3 flex cursor-pointer items-center rounded-full bg-gradient-to-b ${color} to-black p-1 pr-2 text-white hover:opacity-50 ${
                 !selectedGenres.includes(genre) && 'opacity-25'
               }`}
             >
