@@ -41,10 +41,10 @@ export const Library = () => {
           RECENTLY PLAYED
         </h4>
         <div className="flex flex-row space-x-3">
-          {recentlyPlayed?.map((recentTrack) => {
+          {recentlyPlayed?.map((recentTrack, key) => {
             const track = recentTrack?.track
             return (
-              <div className="w-36" key={track?.id}>
+              <div className="w-36" key={`${track?.id}${key}`}>
                 <img src={track?.album?.images?.[0]?.url} alt="" />
                 <p className="text-xl text-white">{track?.name}</p>
                 <p className="text-white">{track?.artists?.[0]?.name}</p>
@@ -56,9 +56,9 @@ export const Library = () => {
           TOP TRACKS
         </h4>
         <div className="flex flex-row space-x-3">
-          {topTracks?.map((topTrack) => {
+          {topTracks?.map((topTrack, key) => {
             return (
-              <div className="w-36" key={topTrack?.id}>
+              <div className="w-36" key={`${topTrack?.id}${key}`}>
                 <img src={topTrack?.album?.images?.[0]?.url} alt="" />
                 <p className="text-xl text-white">{topTrack?.name}</p>
                 <p className="text-white">{topTrack?.artists?.[0]?.name}</p>
@@ -69,10 +69,10 @@ export const Library = () => {
         <h4 className="md:text-2l xl:text-5l text-2xl font-bold text-white">
           FEATURED PLAYLISTS
         </h4>
-        <div className="flex flex-row space-x-3">
-          {featuredPlaylists?.map((playlist) => {
+        <div className="flex flex-row space-x-3 pb-36">
+          {featuredPlaylists?.map((playlist, key) => {
             return (
-              <div className="w-36" key={playlist?.id}>
+              <div className="w-36" key={`${playlist?.id}${key}`}>
                 <img src={playlist?.images?.[0]?.url} alt="" />
                 <p className="text-xl text-white">{playlist?.name}</p>
                 <p className="text-white">{playlist?.owner?.display_name}</p>
