@@ -79,7 +79,7 @@ export const Player = () => {
   }, [volume])
 
   return (
-    <div className="grid h-24 grid-cols-3 bg-gradient-to-b from-black to-gray-900 px-2 text-xs text-white md:px-8 md:text-base">
+    <div className="grid h-24 grid-cols-4 bg-gradient-to-b from-black to-gray-900 px-2 text-xs text-white md:grid-cols-3 md:px-8 md:text-base">
       {/* Left */}
       <div className="flex items-center space-x-4">
         <img
@@ -93,7 +93,7 @@ export const Player = () => {
         </div>
       </div>
       {/* Center section */}
-      <div className="flex flex-col justify-center">
+      <div className="col-span-2 flex flex-col justify-center md:col-span-1">
         <div className="flex flex-row items-center justify-evenly">
           <SwitchHorizontalIcon
             className={`button ${isShuffle ? 'fill-green-500' : null} h-8 w-8`}

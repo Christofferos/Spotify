@@ -1,4 +1,9 @@
-import { XIcon, ChartBarIcon, ChevronDownIcon } from '@heroicons/react/outline'
+import {
+  XIcon,
+  ChartBarIcon,
+  ChevronDownIcon,
+  MenuIcon,
+} from '@heroicons/react/outline'
 import { useSession } from 'next-auth/react'
 import { useEffect, useState } from 'react'
 import { shuffle } from 'lodash'
@@ -13,6 +18,7 @@ import {
   episodesState,
   songAnalyticsState,
 } from '../atoms/playlistAtom'
+import { sidebarFullDisplayState } from '../atoms/sidebarAtom'
 import { useSpotify } from '../hooks/useSpotify'
 import { signOut } from 'next-auth/react'
 import { Shows } from './Shows'
@@ -51,6 +57,7 @@ export const Center = () => {
   const [, setPlaylist] = useRecoilState(playlistState)
   const [, setShows] = useRecoilState(showsState)
   const [, setEpisodes] = useRecoilState(episodesState)
+  const [, setSidebarFullDisplayState] = useRecoilState(sidebarFullDisplayState)
   const [centerDisplay] = useRecoilState(centerDisplayState)
   const [showId] = useRecoilState(showIdState)
   const [songAnalytics, setSongAnalytics] = useRecoilState(songAnalyticsState)
@@ -121,6 +128,16 @@ export const Center = () => {
 
   return (
     <div className="h-screen min-w-0 flex-grow overflow-y-scroll scrollbar-hide">
+      <header className="absolute top-5 left-5">
+        <div
+          className="flex cursor-pointer items-center rounded-full bg-black p-1 text-white opacity-90 hover:opacity-80 md:hidden"
+          onClick={() => {
+            setSidebarFullDisplayState((prevState) => !prevState)
+          }}
+        >
+          <MenuIcon className="h-10 w-10" />
+        </div>
+      </header>
       <header className="absolute top-5 right-8">
         <div
           className="flex cursor-pointer items-center space-x-3 rounded-full bg-black p-1 pr-2 text-white opacity-90 hover:opacity-80"

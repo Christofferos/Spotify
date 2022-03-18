@@ -13,6 +13,7 @@ import { useRecoilState } from 'recoil'
 import { useSpotify } from '../hooks/useSpotify'
 import { centerDisplayState, playlistIdState } from '../atoms/playlistAtom'
 import { DISPLAY_TYPE } from './Center'
+import { sidebarFullDisplayState } from '../atoms/sidebarAtom'
 
 export const Sidebar = () => {
   const spotifyApi = useSpotify()
@@ -20,6 +21,9 @@ export const Sidebar = () => {
   const [playlistId, setPlaylistId] = useRecoilState(playlistIdState)
   const { data: session, status } = useSession()
   const [, setCenterDisplay] = useRecoilState(centerDisplayState)
+  const [sidebarFullDisplay, setSidebarFullDisplay] = useRecoilState(
+    sidebarFullDisplayState
+  )
 
   useEffect(() => {
     if (spotifyApi.getAccessToken()) {
@@ -30,12 +34,17 @@ export const Sidebar = () => {
   }, [session, spotifyApi])
 
   return (
-    <div className="hidden h-screen shrink-0 overflow-y-scroll border-r border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex lg:max-w-[15rem] lg:text-sm">
+    <div
+      className={`${
+        sidebarFullDisplay === true ? 'pt-24' : 'hidden'
+      } h-screen shrink-0 overflow-y-scroll border-r border-gray-900 p-5 pb-36 text-xs text-gray-500 scrollbar-hide sm:max-w-[12rem] md:inline-flex lg:max-w-[15rem] lg:text-sm`}
+    >
       <div className="space-y-4">
         <button
           className="flex items-center space-x-2 hover:text-white"
           onClick={() => {
             setCenterDisplay(DISPLAY_TYPE.HOME)
+            setSidebarFullDisplay(false)
           }}
         >
           <HomeIcon className="h-5 w-5" />
@@ -45,6 +54,7 @@ export const Sidebar = () => {
           className="flex items-center space-x-2 hover:text-white"
           onClick={() => {
             setCenterDisplay(DISPLAY_TYPE.SEARCH)
+            setSidebarFullDisplay(false)
           }}
         >
           <SearchIcon className="h-5 w-5" />
@@ -54,6 +64,7 @@ export const Sidebar = () => {
           className="flex items-center space-x-2 hover:text-white"
           onClick={() => {
             setCenterDisplay(DISPLAY_TYPE.LIBRARY)
+            setSidebarFullDisplay(false)
           }}
         >
           <LibraryIcon className="h-5 w-5" />
@@ -68,6 +79,7 @@ export const Sidebar = () => {
           className="flex items-center space-x-2 hover:text-white"
           onClick={() => {
             setCenterDisplay(DISPLAY_TYPE.SAVED_TRACKS)
+            setSidebarFullDisplay(false)
           }}
         >
           <HeartIcon className="h-5 w-5" />
@@ -77,6 +89,7 @@ export const Sidebar = () => {
           className="flex items-center space-x-2 hover:text-white"
           onClick={() => {
             setCenterDisplay(DISPLAY_TYPE.SAVED_SHOWS)
+            setSidebarFullDisplay(false)
           }}
         >
           <RssIcon className="h-5 w-5" />
@@ -93,6 +106,7 @@ export const Sidebar = () => {
               onClick={() => {
                 setPlaylistId(playlist.id)
                 setCenterDisplay(DISPLAY_TYPE.PLAYLIST)
+                setSidebarFullDisplay(false)
               }}
             >
               {playlist.name}

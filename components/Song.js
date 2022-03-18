@@ -30,7 +30,7 @@ const Song = ({ order, track }) => {
 
   return (
     <div
-      className="grid cursor-pointer grid-cols-2 rounded-lg py-4 px-5 text-gray-500 hover:bg-gray-900"
+      className="grid cursor-pointer grid-cols-2 rounded-lg py-4 px-0 text-gray-500 hover:bg-gray-900 md:px-5"
       onClick={playSong}
     >
       <div className="flex items-center space-x-4">
@@ -82,7 +82,16 @@ const Song = ({ order, track }) => {
                 spotifyApi
                   .getAudioFeaturesForTrack(track.track.id)
                   .then((data) => {
-                    setSongAnalytics(data?.body)
+                    console.log('Analytics ', data?.body)
+                    setSongAnalytics({
+                      energy: Math.round(data?.body?.energy * 100),
+                      valence: Math.round(data?.body?.valence * 100),
+                      tempo: Math.round(data?.body?.tempo),
+                      danceability: Math.round(data?.body?.danceability * 100),
+                      speechiness: Math.round(data?.body?.speechiness * 100),
+                      acousticness: Math.round(data?.body?.acousticness * 100),
+                      liveliness: Math.round(data?.body?.liveness * 100),
+                    })
                   })
                   .catch((err) => console.log(err))
                 e.stopPropagation()
