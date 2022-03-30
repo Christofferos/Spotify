@@ -29,7 +29,7 @@
 - Tailwind
 - Recoil
 - NodeJS
-- TDD
+- Cypress
 - Jest
 - React Testing Library (DOM node testing)
 - Pre-commit git hooks
@@ -47,6 +47,8 @@
 * **System Tests** - focus on testing the complete software or product as a whole.
 
 <hr/>
-<h2>Cyprus (End-to-end testing)</h2>
+<h2>Cypress (Integration and end-to-end testing)</h2>
 
-- Simulated user behaviour in browser
+- End-to-end is simulated user behaviour in browser
+
+- Given, When, Then syntax
